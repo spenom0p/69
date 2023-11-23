@@ -1,0 +1,199 @@
+12-
+
+CREATE FUNCTION SquareNumber(num INT)
+RETURNS INT
+BEGIN
+    DECLARE result INT;
+    SET result = num * num;
+    RETURN result;
+END
+
+13-
+
+use yash;
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(50),
+    designation VARCHAR(50),
+    salary DECIMAL(10, 2),
+    department_id INT
+);
+
+-- Sample data
+INSERT INTO employees VALUES (149, 'John Doe', 'Manager', 75000.00, 10);
+-- ... (insert other sample data)
+select*from employees;
+DELIMITER //
+CREATE PROCEDURE EMP()
+BEGIN
+ SELECT employee_name, designation, salary, department_id
+FROM employees
+WHERE employee_id = 149;
+
+END //
+DELIMITER ;
+
+call EMP();
+
+14-
+       CREATE DEFINER=root@localhost PROCEDURE GetEmployeeCountInDepartment(
+    IN p_department_id INT
+)
+BEGIN
+    DECLARE v_employee_count INT;
+
+    -- Fetch the count of employees in the specified department
+    SELECT COUNT(*)
+    INTO v_employee_count
+    FROM employees
+    WHERE department_id = p_department_id;
+
+    -- Print the result
+    SELECT CONCAT('Number of employees in department ', p_department_id, ': ', v_employee_count) AS result;
+END
+
+15-
+
+CREATE DEFINER=root@localhost PROCEDURE CalculateAverage(IN input_number INT,OUT input_number_1 INT)
+BEGIN
+    DECLARE sum_numbers INT DEFAULT 0;
+    DECLARE count_numbers INT DEFAULT 0;
+    DECLARE average INT DEFAULT 0;
+    -- Loop until the user enters 0
+    WHILE input_number != 0 DO
+        SET sum_numbers = sum_numbers + input_number;
+        SET count_numbers = count_numbers + 1;
+
+        -- Get the next number from the user
+        SELECT 'Enter a number (enter 0 to stop):' AS prompt;
+        SET input_number_1 = CAST(READ_LINE() AS SIGNED);
+    END WHILE;
+        SET average=sum_numbers / count_numbers;
+    -- Calculate and display the average
+    IF count_numbers > 0 THEN
+        SELECT CONCAT('Average:', average) AS result;
+    ELSE
+        SELECT 'No numbers entered.' AS result;
+    END IF;
+END
+
+16-
+
+CREATE DEFINER=root@localhost PROCEDURE CheckPalindrome(IN input_string VARCHAR(255))
+BEGIN
+    DECLARE reversed_string VARCHAR(255);
+    
+    -- Remove spaces from the input string
+    SET input_string = REPLACE(input_string, ' ', '');
+
+    -- Reverse the input string
+    SET reversed_string = REVERSE(input_string);
+
+    -- Check if the input string is equal to its reverse
+    IF input_string = reversed_string THEN
+        SELECT CONCAT('The string "', input_string, '" is a palindrome.') AS result;
+    ELSE
+        SELECT CONCAT('The string "', input_string, '" is not a palindrome.') AS result;
+    END IF;
+END
+
+
+17-
+
+CREATE DEFINER=root@localhost PROCEDURE SumOfDigits(IN input_number INT, OUT digit_sum INT)
+BEGIN
+    DECLARE temp_number INT;
+    DECLARE digit INT;
+
+    -- Initialize variables
+    SET temp_number = input_number;
+    SET digit_sum = 0;
+
+    -- Check if the input number is negative, make it positive
+    IF temp_number < 0 THEN
+        SET temp_number = ABS(temp_number);
+    END IF;
+
+    -- Calculate the sum of digits
+    WHILE temp_number > 0 DO
+        SET digit = temp_number % 10;
+        SET digit_sum = digit_sum + digit;
+        SET temp_number = temp_number / 10;
+    END WHILE;
+END
+
+18,19 (Similar)-
+
+create database abcdeF1g55;
+use abcdeF1g55;
+CREATE TABLE counter (
+     counter_id text,
+    counter_name VARCHAR(255),
+    register_id INT
+);
+insert into counter values ('gufa', 'german', '52');
+DELIMITER //
+CREATE PROCEDURE DisplayManufacturingRecords1()
+BEGIN
+    SELECT * FROM counter;
+END //
+DELIMITER ;
+CALL DisplayManufacturingRecords1();
+
+26-
+   1.
+Create database yz;
+use yz;
+
+CREATE TABLE Books (
+    Bid INT PRIMARY KEY,
+    Title VARCHAR(255),
+    Author VARCHAR(255),
+    Price DECIMAL(10, 2)
+);
+
+CREATE TABLE Transaction (
+    Sid INT PRIMARY KEY,
+    Bid INT,
+    TransactionDate DATE,
+    -- Other relevant columns
+    FOREIGN KEY (Bid) REFERENCES Books(Bid)
+);
+
+DELIMITER //
+CREATE TRIGGER After_Insert_Books
+AFTER INSERT ON Books
+FOR EACH ROW
+BEGIN
+    INSERT INTO Transaction (Sid, Bid, TransactionDate)
+    VALUES (NEW.Bid, NEW.Bid, NOW()); -- Assuming NOW() for the TransactionDate, adjust as needed
+END;
+//
+DELIMITER ;
+
+
+
+
+27-
+
+MONGO DB-
+
+db.employee.insert({
+... "emp_id": 1,
+... "emp_name": " raju kumar",
+... "emp_email": "tarzan@gmail.com"
+... })
+
+test>show collections
+employee
+test> db.employee.find({}).pretty()
+
+test> db.employee.count()
+
+test> db.employee.find({}).pretty()
+
+
+test> db.employee.remove({"emp_id":2})
+
+
+

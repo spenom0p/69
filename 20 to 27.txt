@@ -1,0 +1,427 @@
+20.
+use suraj;
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    JobTitle VARCHAR(50),
+    HireDate DATE,
+    Salary DECIMAL(10, 2)
+);
+
+-- Insert some sample data into the Employees table
+INSERT INTO Employees (EmployeeID, FirstName, LastName, JobTitle, HireDate, Salary)
+VALUES
+    (1, 'John', 'Doe', 'Software Engineer', '2022-01-01', 80000.00),
+    (2, 'Jane', 'Smith', 'Project Manager', '2022-02-15', 90000.00),
+    (3, 'Bob', 'Johnson', 'Data Analyst', '2022-03-20', 70000.00);
+
+-- Create the GetEmployeeInfo stored procedure
+DELIMITER //
+
+CREATE PROCEDURE GetAllEmployees()
+BEGIN
+    -- Query to retrieve employee information
+    SELECT
+        EmployeeID,
+        CONCAT(FirstName, ' ', LastName) AS EmployeeName,
+        JobTitle,
+        HireDate,
+        Salary
+    FROM
+        Employees;
+END //
+
+DELIMITER ;
+-- Call the stored procedure
+CALL GetAllEmployees();
+
+
+
+21.
+
+CREATE TABLE countries (
+    COUNTRY_ID VARCHAR(2) PRIMARY KEY,
+    COUNTRY_NAME VARCHAR(40) NOT NULL
+);
+
+-- Insert some sample data
+INSERT INTO countries (COUNTRY_ID, COUNTRY_NAME) VALUES
+    ('US', 'United States'),
+    ('CA', 'Canada'),
+    ('UK', 'United Kingdom'),
+    ('IN', 'India'),
+    ('AU', 'Australia');
+-- Assuming you have a table named 'countries' with a column 'COUNTRY_NAME'
+
+DELIMITER //
+
+CREATE PROCEDURE GetAllCountryNames()
+BEGIN
+    SELECT COUNTRY_NAME
+    FROM countries;
+END //
+
+DELIMITER ;
+CALL GetAllCountryNames();
+
+Certainly! Let's break down the provided SQL actions without including the actual code:
+
+1. **Table Creation:**
+   - A table named `countries` is created with two columns:
+     - `COUNTRY_ID` (VARCHAR): A unique identifier for each country (primary key).
+     - `COUNTRY_NAME` (VARCHAR): The name of the country, which cannot be empty.
+
+2. **Sample Data Insertion:**
+   - Sample data is inserted into the `countries` table, providing information about several countries, each identified by a unique `COUNTRY_ID` and labeled with its `COUNTRY_NAME`.
+
+3. **Stored Procedure Creation:**
+   - A stored procedure named `GetAllCountryNames` is defined.
+   - This stored procedure retrieves and returns all the country names from the `countries` table.
+
+4. **Stored Procedure Invocation:**
+   - The `GetAllCountryNames` stored procedure is invoked.
+   - The result is a list of all country names, retrieved from the `countries` table.
+
+In essence, this set of SQL actions establishes a table to store country information, populates it with sample data, defines a reusable procedure to retrieve country names, and then demonstrates the procedure by invoking it to display the names of all countries in the table.
+
+22.
+
+-- Creating Emp Table
+CREATE TABLE Emp (
+    eno INT PRIMARY KEY,
+    ename VARCHAR(50),
+    designation VARCHAR(50),
+    salary DECIMAL(10, 2),
+    dno INT
+);
+
+-- Creating Dept Table
+CREATE TABLE Dept (
+    dno INT PRIMARY KEY,
+    dname VARCHAR(50),
+    dhod VARCHAR(50)
+);
+
+-- Inserting sample data into Dept Table
+INSERT INTO Dept (dno, dname, dhod) VALUES
+    (101, 'comp', 'John Doe'),
+    (102, 'hr', 'Jane Smith'),
+    (103, 'sales', 'Mike Johnson');
+
+-- Inserting sample data into Emp Table
+INSERT INTO Emp (eno, ename, designation, salary, dno) VALUES
+    (1, 'John', 'Developer', 40000.00, 101),
+    (2, 'Jane', 'HR Specialist', 38000.00, 102),
+    (3, 'Mike', 'Sales Manager', 42000.00, 103),
+    (4, 'Alice', 'Tester', 36000.00, 101),
+    (5, 'Bob', 'Analyst', 39000.00, 101);
+
+-- Update salary for 'comp' department employees with a 10% increment
+UPDATE Emp
+SET salary = salary * 1.1
+WHERE dno = 101;
+
+-- Display employee names and designations for 'comp' department with salary > 35000
+SELECT ename, designation
+FROM Emp
+WHERE dno = 101 AND salary > 35000;
+
+-- Creating DeletedRecords Table
+CREATE TABLE DeletedRecords (
+    eno INT PRIMARY KEY,
+    ename VARCHAR(50),
+    designation VARCHAR(50),
+    salary DECIMAL(10, 2),
+    dno INT
+);
+
+-- Creating Trigger
+DELIMITER //
+CREATE TRIGGER AfterDeleteEmpTrigger
+AFTER DELETE ON Emp
+FOR EACH ROW
+BEGIN
+    INSERT INTO DeletedRecords (eno, ename, designation, salary, dno)
+    VALUES (OLD.eno, OLD.ename, OLD.designation, OLD.salary, OLD.dno);
+END;
+//
+DELIMITER ;
+
+-- Delete a record from Emp table to trigger the AfterDeleteEmpTrigger
+DELETE FROM Emp WHERE eno = 1;
+
+-- Display records in DeletedRecords table after trigger execution
+SELECT * FROM DeletedRecords;
+23
+-- Creating Boats Table
+CREATE TABLE Boats (
+    Bid INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Bcolor VARCHAR(20)
+);
+
+-- Creating Sailors Table
+CREATE TABLE Sailors (
+    Sid INT PRIMARY KEY,
+    Sname VARCHAR(50),
+    Srating INT
+);
+
+-- Creating Reserves Table
+CREATE TABLE Reserves (
+    Bid INT,
+    Sid INT,
+    ReservationDate DATE,
+    PRIMARY KEY (Bid, Sid),
+    FOREIGN KEY (Bid) REFERENCES Boats(Bid),
+    FOREIGN KEY (Sid) REFERENCES Sailors(Sid)
+);
+
+-- Creating RedBoats Table
+CREATE TABLE RedBoats (
+    Sid INT,
+    Sname VARCHAR(50),
+    Bid INT
+);
+
+-- Trigger: Increment Sailor Rating when reserving a boat
+DELIMITER //
+CREATE TRIGGER IncrementRatingTrigger
+AFTER INSERT ON Reserves
+FOR EACH ROW
+BEGIN
+    UPDATE Sailors
+    SET Srating = Srating + 1
+    WHERE Sid = NEW.Sid;
+END;
+//
+DELIMITER ;
+
+-- Cursor: Insert Sailor information for those who reserved a red-colored boat into RedBoats Table
+DELIMITER //
+CREATE PROCEDURE InsertRedBoats()
+BEGIN
+    DECLARE sailor_id INT;
+    DECLARE sailor_name VARCHAR(50);
+    DECLARE boat_id INT;
+    DECLARE done INT DEFAULT FALSE;
+
+    -- Declare cursor
+    DECLARE red_boats_cursor CURSOR FOR
+        SELECT S.Sid, S.Sname, R.Bid
+        FROM Sailors S
+        JOIN Reserves R ON S.Sid = R.Sid
+        JOIN Boats B ON R.Bid = B.Bid
+        WHERE B.Bcolor = 'Red';
+
+    -- Declare continue handler
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Open the cursor
+    OPEN red_boats_cursor;
+
+    -- Loop to fetch and insert data
+    red_boats_loop: LOOP
+        FETCH red_boats_cursor INTO sailor_id, sailor_name, boat_id;
+        IF done THEN
+            LEAVE red_boats_loop;
+        END IF;
+
+        -- Insert into RedBoats Table
+        INSERT INTO RedBoats (Sid, Sname, Bid)
+        VALUES (sailor_id, sailor_name, boat_id);
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE red_boats_cursor;
+END;
+//
+DELIMITER ;
+
+-- Inserting sample data into Boats Table
+INSERT INTO Boats (Bid, Name, Bcolor) VALUES
+    (1, 'Boat1', 'Red'),
+    (2, 'Boat2', 'Blue'),
+    (3, 'Boat3', 'Red'),
+    (4, 'Boat4', 'Green');
+
+-- Inserting sample data into Sailors Table
+INSERT INTO Sailors (Sid, Sname, Srating) VALUES
+    (101, 'Sailor1', 5),
+    (102, 'Sailor2', 3),
+    (103, 'Sailor3', 4),
+    (104, 'Sailor4', 2);
+
+-- Inserting sample data into Reserves Table
+INSERT INTO Reserves (Bid, Sid, ReservationDate) VALUES
+    (1, 101, '2023-01-15'),
+    (2, 102, '2023-02-20'),
+    (1, 103, '2023-03-10'),
+    (3, 104, '2023-04-05');
+-- cursor cheak
+CALL InsertRedBoats();
+SELECT * FROM RedBoats;
+-- trigger cheak
+
+SELECT Sid FROM Sailors;
+INSERT INTO Sailors (Sid, Sname, Srating) VALUES (1, 'SailorName', 0);
+SELECT * FROM Sailors WHERE Sid = 1;
+
+
+
+23.
+
+-- Creating Boats Table
+CREATE TABLE Boats (
+    Bid INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Bcolor VARCHAR(20)
+);
+
+-- Creating Sailors Table
+CREATE TABLE Sailors (
+    Sid INT PRIMARY KEY,
+    Sname VARCHAR(50),
+    Srating INT
+);
+
+-- Creating Reserves Table
+CREATE TABLE Reserves (
+    Bid INT,
+    Sid INT,
+    ReservationDate DATE,
+    PRIMARY KEY (Bid, Sid),
+    FOREIGN KEY (Bid) REFERENCES Boats(Bid),
+    FOREIGN KEY (Sid) REFERENCES Sailors(Sid)
+);
+
+-- Creating RedBoats Table
+CREATE TABLE RedBoats (
+    Sid INT,
+    Sname VARCHAR(50),
+    Bid INT
+);
+
+-- Trigger: Increment Sailor Rating when reserving a boat
+DELIMITER //
+CREATE TRIGGER IncrementRatingTrigger
+AFTER INSERT ON Reserves
+FOR EACH ROW
+BEGIN
+    -- Increment the rating of the sailor when reserving a boat
+    UPDATE Sailors
+    SET Srating = Srating + 1
+    WHERE Sid = NEW.Sid;
+END;
+//
+DELIMITER ;
+
+-- Cursor: Insert Sailor information for those who reserved a red-colored boat into RedBoats Table
+DELIMITER //
+CREATE PROCEDURE InsertRedBoats()
+BEGIN
+    DECLARE sailor_id INT;
+    DECLARE sailor_name VARCHAR(50);
+    DECLARE boat_id INT;
+    DECLARE done INT DEFAULT FALSE;
+
+    -- Declare a forward-only cursor
+    DECLARE red_boats_cursor CURSOR FOR
+        SELECT S.Sid, S.Sname, R.Bid
+        FROM Sailors S
+        JOIN Reserves R ON S.Sid = R.Sid
+        JOIN Boats B ON R.Bid = B.Bid
+        WHERE B.Bcolor = 'Red';
+
+    -- Declare continue handler
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Open the cursor
+    OPEN red_boats_cursor;
+
+    -- Loop to fetch and insert data
+    red_boats_loop: LOOP
+        FETCH red_boats_cursor INTO sailor_id, sailor_name, boat_id;
+        IF done THEN
+            LEAVE red_boats_loop;
+        END IF;
+
+        -- Insert into RedBoats Table
+        INSERT INTO RedBoats (Sid, Sname, Bid)
+        VALUES (sailor_id, sailor_name, boat_id);
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE red_boats_cursor;
+END;
+//
+DELIMITER ;
+
+-- Inserting sample data into Boats Table
+INSERT INTO Boats (Bid, Name, Bcolor) VALUES
+    (1, 'Boat1', 'Red'),
+    (2, 'Boat2', 'Blue'),
+    (3, 'Boat3', 'Red'),
+    (4, 'Boat4', 'Green');
+
+-- Inserting sample data into Sailors Table
+INSERT INTO Sailors (Sid, Sname, Srating) VALUES
+    (101, 'Sailor1', 5),
+    (102, 'Sailor2', 3),
+    (103, 'Sailor3', 4),
+    (104, 'Sailor4', 2);
+
+-- Inserting sample data into Reserves Table
+INSERT INTO Reserves (Bid, Sid, ReservationDate) VALUES
+    (1, 101, '2023-01-15'),
+    (2, 102, '2023-02-20'),
+    (1, 103, '2023-03-10'),
+    (3, 104, '2023-04-05');
+
+-- Cursor check
+CALL InsertRedBoats();
+SELECT * FROM RedBoats;
+
+-- Trigger check
+SELECT Sid FROM Sailors;
+INSERT INTO Sailors (Sid, Sname, Srating) VALUES (1, 'SailorName', 0);
+SELECT * FROM Sailors WHERE Sid = 1;
+
+
+A cursor in SQL is a temporary memory or workstation that's used to store database tables and manipulate data. Cursors are allocated by the database server when a user performs Data Manipulation Language (DML) operations on a table. DML operations include INSERT, UPDATE, and DELETE
+
+In SQL, a trigger is a database object that automatically executes SQL code when a specific database event occurs. Triggers are a type of stored procedure that are associated with a particular table
+
+
+27.
+// Create or switch to a new database named "mydatabase"
+use mydatabase;
+
+// Insert a document into a collection named "mycollection"
+db.mycollection.insertOne({
+    "name": "John Doe",
+    "age": 30,
+    "city": "New York"
+});
+
+// Find and display all documents in the "mycollection" collection
+db.mycollection.find();
+
+// Update the document with name "John Doe"
+db.mycollection.updateOne(
+    { "name": "John Doe" },
+    { $set: { "age": 31, "city": "San Francisco" } }
+);
+
+// Find and display the updated document
+db.mycollection.findOne({ "name": "John Doe" });
+
+// Delete the document with name "John Doe"
+db.mycollection.deleteOne({ "name": "John Doe" });
+
+// Find and display all documents after deletion
+db.mycollection.find();
+

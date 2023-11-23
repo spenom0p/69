@@ -1,0 +1,1131 @@
+1.CREATE TABLE countries (
+    country_id INT,
+    country_name VARCHAR(255),
+    region_id INT
+);
+
+
+ALTER TABLE countries
+ADD country_id INT,
+    country_name VARCHAR(255),
+    region_id INT;
+
+theory 
+The provided SQL statement is an "ALTER TABLE" statement, which is used to modify the structure of an existing database table named countries. The statement adds three new columns to the table:
+
+country_id: An integer column.
+country_name: A variable character string column with a maximum length of 255 characters.
+region_id: An integer column.
+This modification is intended to extend the functionality and data storage capabilities of the countries table by incorporating these additional columns.
+
+2.
+Write a SQL statement to create a table named jobs including columns job_id, job_title, min_salary, max_salary and check whether the max_salary amount exceeding the upper limit 25000.
+-- Creating the database
+CREATE DATABASE IF NOT EXISTS your_database_name;
+USE your_database_name;
+
+-- Creating the jobs table
+CREATE TABLE jobs (
+    job_id VARCHAR(10) PRIMARY KEY,
+    job_title VARCHAR(50),
+    min_salary DECIMAL(10, 2),
+    max_salary DECIMAL(10, 2) CHECK (max_salary <= 25000)
+);
+
+-- Inserting sample data into the jobs table with Indian names
+INSERT INTO jobs (job_id, job_title, min_salary, max_salary)
+VALUES 
+    ('JOB001', 'Software Engineer', 6000.00, 9000.00),
+    ('JOB002', 'Data Analyst', 4500.00, 7000.00);
+
+-- Selecting all data from the jobs table
+SELECT *
+FROM jobs;
+3.	Write a SQL statement to create a table named countries including columns country_id, country_name and region_id and make sure that no countries except Italy, India and China will be entered in the table.
+-- Creating the countries table
+CREATE TABLE countries (
+    country_id VARCHAR(2) PRIMARY KEY,
+    country_name VARCHAR(50) CHECK (country_name IN ('Italy', 'India', 'China')),
+    region_id INT
+);
+
+-- Inserting sample data into the countries table
+INSERT INTO countries (country_id, country_name, region_id)
+VALUES 
+    ('IT', 'Italy', 1),
+    ('IN', 'India', 2),
+    ('CN', 'China', 3);
+ -- This insertion will violate the CHECK constraint
+
+-- Selecting all data from the countries table
+SELECT *
+FROM countries;
+4.	Write a SQL statement to create a table named job_histry including columns employee_id, start_date, end_date, job_id and department_id and make sure that the value against column end_date will be entered at the time of insertion to the format like '--/--/----'.
+
+-- Creating the your_table_name table with DD/MM/YYYY format for end_date
+CREATE TABLE your_table_name (
+    employee_id INT, -- Column for storing employee identifier
+    start_date DATE, -- Column for storing the starting date of the job
+    end_date VARCHAR(10) CHECK (REGEXP_LIKE(end_date, '^[0-9]{2}/[0-9]{2}/[0-9]{4}$')), -- Column for storing the ending date of the job with a check for 'DD/MM/YYYY' format
+    job_id VARCHAR(10), -- Column for storing job identifier
+    department_id INT -- Column for storing department identifier
+);
+
+-- Inserting sample data into the your_table_name table
+INSERT INTO your_table_name (employee_id, start_date, end_date, job_id, department_id)
+VALUES 
+    (101, '2022-01-01', '22/05/2003', 'JOB001', 10), -- Inserting data for the first job
+    (102, '2021-05-15', '10/12/2005', 'JOB002', 20), -- Inserting data for the second job
+    (103, '2022-03-20', '2023-05-31', 'JOB003', 30); -- This insertion is valid for the third job
+
+-- Selecting all data from the your_table_name table
+SELECT *
+FROM your_table_name;
+
+
+theory 
+REGEXP_LIKE is a function in SQL that is used to check if a given string matches a regular expression pattern. It returns TRUE if the regular expression pattern is found in the string and FALSE otherwise.
+This constraint is applied to the end_date column. It ensures that the end_date value matches the specified regular expression pattern:
+
+^[0-9]{2}/[0-9]{2}/[0-9]{4}$
+^: Start of the string.
+[0-9]{2}: Match exactly two digits.
+/: Match a forward slash.
+[0-9]{2}: Match exactly two digits.
+/: Match another forward slash.
+[0-9]{4}: Match exactly four digits.
+$: End of the string.
+
+5.	Write a SQL statement to create a table named countries including columns country_id,country_name and region_id and make sure that no duplicate data against column country_id will be allowed at the time of insertion.
+-- Creating the countries table with a UNIQUE constraint on country_id
+CREATE TABLE countries (
+    country_id VARCHAR(2) PRIMARY KEY,
+    country_name VARCHAR(50),
+    region_id INT,
+    UNIQUE (country_id)
+);
+
+-- Inserting sample data into the countries table
+INSERT INTO countries (country_id, country_name, region_id)
+VALUES 
+    ('IT', 'Italy', 1),
+    ('IN', 'India', 2),
+    ('CN', 'China', 3),
+    ('US', 'United States', 4); -- This insertion will violate the UNIQUE constraint
+
+-- Selecting all data from the countries table
+SELECT *
+FROM countries;
+Explanation:
+
+CREATE TABLE countries (...);: This statement creates the countries table with columns country_id, country_name, and region_id. The UNIQUE constraint is applied to the country_id column, ensuring that each country_id must be unique.
+
+INSERT INTO countries (country_id, country_name, region_id) VALUES ...;: This statement inserts sample data into the countries table. Note that the last insertion attempts to add a country with a country_id that already exists in the table, violating the UNIQUE constraint.
+
+SELECT * FROM countries;: This statement retrieves and displays all columns from the countries table.
+
+You can adjust the sample data or add more INSERT INTO statements based on your requirements.
+
+6.	Write a SQL statement to create a table named jobs including columns job_id, job_title, min_salary and max_salary, and make sure that, the default value for job_title is blank and min_salary is 8000 and max_salary is NULL will be entered automatically at the time of insertion if no value assigned for the specified columns
+
+-- Creating the jobs table with default values
+CREATE TABLE jobs (
+    job_id VARCHAR(10) PRIMARY KEY,
+    job_title VARCHAR(50) DEFAULT '', -- Default value for job_title is blank
+    min_salary DECIMAL(10, 2) DEFAULT 8000, -- Default value for min_salary is 8000
+    max_salary DECIMAL(10, 2) DEFAULT NULL -- Default value for max_salary is NULL
+);
+
+-- Inserting sample data into the jobs table
+INSERT INTO jobs (job_id) VALUES ('JOB001'); -- Using default values for job_title, min_salary, and max_salary
+
+-- Selecting all data from the jobs table
+SELECT *
+FROM jobs;
+Explanation:
+
+CREATE TABLE jobs (...);: This statement creates the jobs table with columns job_id, job_title, min_salary, and max_salary, each with their respective data types and default values.
+
+INSERT INTO jobs (job_id) VALUES ('JOB001');: This statement inserts a sample row into the jobs table. Since values for job_title, min_salary, and max_salary are not provided, the default values specified in the table definition will be used.
+
+SELECT * FROM jobs;: This statement retrieves and displays all columns from the jobs table after the insertion.
+
+Adjust the sample data or add more INSERT INTO statements based on your requirements.
+
+
+7.	Write a SQL statement to create a table named countries including columns country_id, country_name and region_id and make sure that the country_id column will be a key field which will not contain any duplicate data at the time of insertion.
+-- Creating the countries table with country_id as the primary key
+CREATE TABLE countries (
+    country_id VARCHAR(2) PRIMARY KEY,
+    country_name VARCHAR(50),
+    region_id INT
+);
+
+-- Inserting sample data into the countries table
+INSERT INTO countries (country_id, country_name, region_id)
+VALUES 
+    ('IT', 'Italy', 1),
+    ('IN', 'India', 2),
+    ('CN', 'China', 3),
+    ('US', 'United States', 4); -- This insertion will violate the primary key constraint
+
+-- Selecting all data from the countries table
+SELECT *
+FROM countries;
+Explanation:
+
+CREATE TABLE countries (...);: This statement creates the countries table with columns country_id, country_name, and region_id. The country_id column is specified as the primary key, enforcing uniqueness.
+
+INSERT INTO countries (country_id, country_name, region_id) VALUES ...;: This statement inserts sample data into the countries table. Note that the last insertion attempts to add a country with a country_id that already exists in the table, violating the primary key constraint.
+
+SELECT * FROM countries;: This statement retrieves and displays all columns from the countries table.
+
+Adjust the sample data or add more INSERT INTO statements based on your requirements. The primary key constraint ensures that the country_id column does not contain any duplicate data.
+
+
+8.	Write a SQL statement to create a table countries including columns country_id, country_name and region_id and make sure that the column country_id will be unique and store an auto incremented value.
+-- Creating the countries table with an auto-incremented country_id
+CREATE TABLE countries (
+    country_id INT PRIMARY KEY AUTO_INCREMENT,
+    country_name VARCHAR(50),
+    region_id INT
+);
+
+-- Inserting sample data into the countries table
+INSERT INTO countries (country_name, region_id)
+VALUES 
+    ('Italy', 1),
+    ('India', 2),
+    ('China', 3),
+    ('United States', 4);
+
+-- Selecting all data from the countries table
+SELECT *
+FROM countries;
+
+Explanation:
+
+CREATE TABLE countries (...);: This statement creates the countries table with columns country_id, country_name, and region_id. The country_id column is specified as an integer primary key with the AUTO_INCREMENT attribute, ensuring it is auto-incremented and unique.
+
+INSERT INTO countries (country_name, region_id) VALUES ...;: This statement inserts sample data into the countries table. Since the country_id is set to auto-increment, you don't need to provide a value for it during insertion.
+
+SELECT * FROM countries;: This statement retrieves and displays all columns from the countries table.
+
+The primary key constraint on country_id ensures that it is unique for each row, and the values are automatically incremented for each new row added to the table. Adjust the sample data or add more INSERT INTO statements based on your requirements.
+
+
+9.	Write a SQL statement to create a table countries including columns country_id, country_name and region_id and make sure that the combination of columns country_id and region_id will be unique.
+
+-- Creating the countries table with a unique combination of country_id and region_id
+CREATE TABLE countries (
+    country_id VARCHAR(2),
+    country_name VARCHAR(50),
+    region_id INT,
+    PRIMARY KEY (country_id, region_id)
+);
+
+-- Inserting sample data into the countries table
+INSERT INTO countries (country_id, country_name, region_id)
+VALUES 
+    ('IT', 'Italy', 1),
+    ('IN', 'India', 2),
+    ('CN', 'China', 3),
+    ('US', 'United States', 4),
+    ('IN', 'Indonesia', 2); -- This insertion will violate the unique constraint
+
+-- Selecting all data from the countries table
+SELECT *
+FROM countries;
+Explanation:
+
+CREATE TABLE countries (...);: This statement creates the countries table with columns country_id, country_name, and region_id. The primary key constraint is applied to the combination of country_id and region_id.
+
+INSERT INTO countries (country_id, country_name, region_id) VALUES ...;: This statement inserts sample data into the countries table. The last insertion attempts to add a country with a combination of country_id and region_id that already exists in the table, violating the unique constraint.
+
+SELECT * FROM countries;: This statement retrieves and displays all columns from the countries table.
+
+Adjust the sample data or add more INSERT INTO statements based on your requirements. The primary key constraint ensures that the combination of country_id and region_id is unique for each row in the table.
+
+10.	Write a SQL statement to create a table job_history including columns employee_id, start_date, end_date, job_id and department_id and make sure that, the employee_id column does not contain any duplicate value at the time of insertion and the foreign key column job_id contain only those values which are exists in the jobs table.
+Here is the structure of the table jobs;
+------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| JOB_ID     | varchar(10)  | NO   | PRI |         |       |
+| JOB_TITLE  | varchar(35)  | NO   |     | NULL    |       |
+| MIN_SALARY | decimal(6,0) | YES  |     | NULL    |       |
+| MAX_SALARY | decimal(6,0) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+
+
+USE my_database;
+--- Creating the positions table
+CREATE TABLE positions (
+    position_id INT PRIMARY KEY,
+    position_title VARCHAR(35) NOT NULL,
+    min_salary DECIMAL(6, 0),
+    max_salary DECIMAL(6, 0)
+);
+
+-- Inserting sample data into positions
+INSERT INTO positions (position_id, position_title, min_salary, max_salary)
+VALUES 
+    (1, 'Position 1', 50000, 80000),
+    (2, 'Position 2', 40000, 70000),
+    (3, 'Position 3', 60000, 90000);
+
+-- Creating the employee_history table with a foreign key reference
+CREATE TABLE employee_history (
+    employee_id INT PRIMARY KEY,
+    start_date DATE,
+    end_date DATE,
+    position_id INT,
+    department_id INT,
+    FOREIGN KEY (position_id) REFERENCES positions(position_id)
+);
+
+-- Inserting sample data into employee_history
+INSERT INTO employee_history (employee_id, start_date, end_date, position_id, department_id)
+VALUES 
+    (1, '2022-01-01', '2023-01-01', 1, 10),
+    (2, '2021-05-15', '2022-05-15', 2, 20),
+    (3, '2022-03-20', '2023-03-20', 3, 30);
+
+-- Selecting all data from employee_history
+SELECT *
+FROM employee_history;
+
+Certainly! Here's the explanation without the code:
+
+1. **Creating the Positions Table:**
+   - A table named `positions` is created with columns `position_id`, `position_title`, `min_salary`, and `max_salary`.
+   - `position_id` is set as the primary key to ensure uniqueness.
+   - `position_title` is a required field (NOT NULL) for the title of the position.
+   - `min_salary` and `max_salary` store the minimum and maximum salary for the position.
+
+2. **Inserting Sample Data into Positions:**
+   - Sample data is inserted into the `positions` table with three positions, each having a unique `position_id` and corresponding title, minimum salary, and maximum salary.
+
+3. **Creating the Employee History Table with a Foreign Key Reference:**
+   - A table named `employee_history` is created with columns `employee_id`, `start_date`, `end_date`, `position_id`, and `department_id`.
+   - `employee_id` is set as the primary key for unique identification.
+   - `position_id` is a foreign key referencing the `position_id` column in the `positions` table, establishing a relationship between employee positions and positions.
+
+4. **Inserting Sample Data into Employee History:**
+   - Sample data is inserted into the `employee_history` table with three employees, each having a unique `employee_id` and corresponding start date, end date, position ID, and department ID.
+
+5. **Selecting All Data from Employee History:**
+   - A SELECT statement retrieves and displays all columns from the `employee_history` table. This allows viewing the inserted data.
+
+In summary, the code sets up tables to store information about positions and employee history, establishes a relationship between positions and employees, inserts sample data, and provides a way to view the data stored in the `employee_history` table.
+
+11.	Write a SQL statement to create a table employees including columns employee_id, first_name, last_name, email, phone_number hire_date, job_id, salary, commission, manager_id and department_id and make sure that, the employee_id column does not contain any duplicate value at the time of insertion and the foreign key columns combined by department_id and manager_id columns contain only those unique combination values, which combinations are exists in the departments table.
+Assume the structure of departments table below.
+| Field           | Type         | Null | Key | Default |Extra 
++-----------------+--------------+------+-----+---------+-----
+| DEPARTMENT_ID   | decimal(4,0) | NO   | PRI | 0       |       |
+| DEPARTMENT_NAME | varchar(30)  | NO   |     | NULL    |       |
+| MANAGER_ID      | decimal(6,0) | NO   | PRI | 0       |       |
+| LOCATION_ID     | decimal(4,0) | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-----
+
+CREATE TABLE departments (
+    DEPARTMENT_ID DECIMAL(4, 0) PRIMARY KEY,
+    DEPARTMENT_NAME VARCHAR(30) NOT NULL,
+    MANAGER_ID DECIMAL(6, 0),
+    LOCATION_ID DECIMAL(4, 0)
+);
+
+-- Sample data for the departments table
+INSERT INTO departments (DEPARTMENT_ID, DEPARTMENT_NAME, MANAGER_ID, LOCATION_ID)
+VALUES
+    (1, 'Department A', 101, 1001),
+    (2, 'Department B', 102, 1002),
+    (3, 'Department C', 103, 1003);
+-- Modifying the departments table to add indexes
+ALTER TABLE departments
+ADD INDEX idx_manager_department (MANAGER_ID, DEPARTMENT_ID);
+
+-- Creating the employees table
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    phone_number VARCHAR(20),
+    hire_date DATE,
+    job_id VARCHAR(10),
+    salary DECIMAL(10, 2),
+    commission DECIMAL(10, 2),
+    manager_id DECIMAL(6, 0),
+    department_id DECIMAL(4, 0),
+    FOREIGN KEY (manager_id, department_id) REFERENCES departments(MANAGER_ID, DEPARTMENT_ID)
+);
+
+-- Sample data for the employees table
+INSERT INTO employees (employee_id, first_name, last_name, email, phone_number, hire_date, job_id, salary, commission, manager_id, department_id)
+VALUES
+    (101, 'John', 'Doe', 'john.doe@example.com', '123-456-7890', '2022-01-01', 'JOB001', 50000.00, 1000.00, 101, 1),
+    (102, 'Jane', 'Smith', 'jane.smith@example.com', '987-654-3210', '2021-12-15', 'JOB002', 60000.00, 1200.00, 102, 2),
+    (103, 'Mike', 'Johnson', 'mike.johnson@example.com', '555-123-7890', '2022-02-20', 'JOB003', 70000.00, 1500.00, 103, 3);
+
+-- Selecting all data from the employees table
+SELECT *
+FROM employees;
+
+explaination 
+
+1. **Creating the Departments Table:**
+   - The `departments` table is created with columns `DEPARTMENT_ID`, `DEPARTMENT_NAME`, `MANAGER_ID`, and `LOCATION_ID`.
+   - `DEPARTMENT_ID` is set as the primary key to ensure uniqueness.
+   - Sample data is inserted into the `departments` table with three departments.
+
+2. **Modifying the Departments Table to Add Indexes:**
+   - An index named `idx_manager_department` is added to the `MANAGER_ID` and `DEPARTMENT_ID` columns in the `departments` table. This index is added to improve the performance of foreign key operations.
+
+3. **Creating the Employees Table:**
+   - The `employees` table is created with columns such as `employee_id`, `first_name`, `last_name`, `email`, `phone_number`, `hire_date`, `job_id`, `salary`, `commission`, `manager_id`, and `department_id`.
+   - `employee_id` is set as the primary key to ensure uniqueness.
+   - The `email` column is marked as `UNIQUE` to ensure that each email address is unique.
+   - A foreign key constraint is added on the combination of `manager_id` and `department_id`, referencing the respective columns in the `departments` table.
+
+4. **Inserting Sample Data into Employees Table:**
+   - Sample data is inserted into the `employees` table for demonstration purposes. Each employee has a unique ID and is associated with a specific department and manager.
+
+5. **Selecting All Data from Employees Table:**
+   - A `SELECT` statement is used to retrieve and display all columns from the `employees` table. This is done to view the data that has been inserted.
+
+In summary, the code sets up two tables, `departments` and `employees`, establishes a foreign key relationship between them, inserts sample data into both tables, and then retrieves and displays the data from the `employees` table. The addition of the index on `MANAGER_ID` and `DEPARTMENT_ID` is aimed at optimizing performance when working with the foreign key constraint.
+
+
+
+12.	a. Write a SQL statement to insert a record with your own value into the table countries against each columns.
+Here in the following is the structure of the table countries.
+--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| COUNTRY_ID   | varchar(2)    | YES  |     | NULL    |       |
+| COUNTRY_NAME | varchar(40)   | YES  |     | NULL    |       |
+| REGION_ID    | decimal(10,0) | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+------	
+
+-- Creating the countries table
+CREATE TABLE countries (
+    COUNTRY_ID VARCHAR(2),
+    COUNTRY_NAME VARCHAR(40),
+    REGION_ID DECIMAL(10, 0)
+);
+
+-- Inserting a record into the countries table
+INSERT INTO countries (COUNTRY_ID, COUNTRY_NAME, REGION_ID)
+VALUES ('US', 'United States', 2);
+
+b.
+Write a SQL statement to insert 3 rows by a single insert statement.
+
+
+-- Creating the countries table
+CREATE TABLE countries (
+    COUNTRY_ID VARCHAR(2),
+    COUNTRY_NAME VARCHAR(40),
+    REGION_ID DECIMAL(10, 0)
+);
+
+-- Inserting 3 rows into the countries table
+INSERT INTO countries (COUNTRY_ID, COUNTRY_NAME, REGION_ID)
+VALUES
+    ('US', 'United States', 2),
+    ('CA', 'Canada', 2),
+    ('IN', 'India', 3);
+c.Write a SQL statement insert rows from country_new table to countries table.
+
+-- Creating the countries table
+CREATE TABLE countries (
+    COUNTRY_ID VARCHAR(5),
+    COUNTRY_NAME VARCHAR(50),
+    REGION_ID INT
+);
+
+-- Creating the country_new table
+CREATE TABLE country_new (
+    COUNTRY_ID VARCHAR(5),
+    COUNTRY_NAME VARCHAR(50),
+    REGION_ID INT
+);
+
+-- Inserting rows into country_new table
+INSERT INTO country_new (COUNTRY_ID, COUNTRY_NAME, REGION_ID)
+VALUES
+    ('C0001', 'India', 1001),
+    ('C0002', 'USA', 1007),
+    ('C0003', 'UK', 1003);
+
+-- Inserting rows from country_new into countries table
+INSERT INTO countries (COUNTRY_ID, COUNTRY_NAME, REGION_ID)
+SELECT COUNTRY_ID, COUNTRY_NAME, REGION_ID
+FROM country_new;
+select * from countries
+
+d. rename the table
+-- Creating a new table with the desired name
+CREATE TABLE country_new AS SELECT * FROM countries;
+
+-- Optionally, you may want to add any additional constraints, indexes, or triggers to the new table
+
+-- Dropping the old table
+DROP TABLE countries;
+
+e.
+CREATE TABLE locations (
+    LOCATION_ID DECIMAL(4, 0),
+    STREET_ADDRESS VARCHAR(40),
+    POSTAL_CODE VARCHAR(12),
+    CITY VARCHAR(30),
+    STATE_PROVINCE VARCHAR(25),
+    COUNTRY_ID VARCHAR(2)
+);
+ALTER TABLE locations
+DROP PRIMARY KEY;
+-- Adding a primary key for the combination of columns location_id and country_id
+ALTER TABLE locations
+ADD PRIMARY KEY (LOCATION_ID, COUNTRY_ID);
+
+13. Write a SQL statement that displays all the information about all salespeople.
+Sample table: salesman
+salesman_id |    name    |   city   | commission 
+-------------+------------+----------+------------
+        5001 | James Hoog | New York |       0.15
+        5002 | Nail Knite | Paris    |       0.13
+        5005 | Pit Alex   | London   |       0.11
+        5006 | Mc Lyon    | Paris    |       0.14
+        5007 | Paul Adam  | Rome     |       0.13
+        5003 | Lauson Hen | San Jose |       0.12
+
+-- Creating the salesman table
+CREATE TABLE salesman (
+    salesman_id INT,
+    name VARCHAR(50),
+    city VARCHAR(30),
+    commission DECIMAL(4, 2)
+);
+
+-- Inserting sample data into the salesman table
+INSERT INTO salesman (salesman_id, name, city, commission)
+VALUES
+    (5001, 'James Hoog', 'New York', 0.15),
+    (5002, 'Nail Knite', 'Paris', 0.13),
+    (5005, 'Pit Alex', 'London', 0.11),
+    (5006, 'Mc Lyon', 'Paris', 0.14),
+    (5007, 'Paul Adam', 'Rome', 0.13),
+    (5003, 'Lauson Hen', 'San Jose', 0.12);
+-- Displaying all information about all salespeople
+SELECT *
+FROM salesman;
+
+14.
+-- Displaying specific columns (names and commissions) for all salespeople
+SELECT name, commission
+FROM salesman;
+********use the table from the 13th problem******
+
+15.
+Write a query to display the columns in a specific order, such as order date, salesman ID, order number, and purchase amount for all orders.  
+Sample table: orders
+ord_no      purch_amt   ord_date    customer_id  salesman_id
+----------  ----------  ----------  -----------  -----------
+70001       150.5       2012-10-05  3005         5002
+70009       270.65      2012-09-10  3001         5005
+70002       65.26       2012-10-05  3002         5001
+70004       110.5       2012-08-17  3009         5003
+70007       948.5       2012-09-10  3005         5002
+70005       2400.6      2012-07-27  3007         5001
+70008       5760        2012-09-10  3002         5001
+70010       1983.43     2012-10-10  3004         5006
+70003       2480.4      2012-10-10  3009         5003
+70012       250.45      2012-06-27  3008         5002
+70011       75.29       2012-08-17  3003         5007
+70013       3045.6      2012-04-25  3002         5001
+
+
+
+
+CREATE TABLE orders (
+    ord_no INT,
+    purch_amt DECIMAL(10, 2),
+    ord_date DATE,
+    customer_id INT,
+    salesman_id INT
+);
+
+-- Inserting sample data into the orders table
+INSERT INTO orders (ord_no, purch_amt, ord_date, customer_id, salesman_id)
+VALUES
+    (70001, 150.5, '2012-10-05', 3005, 5002),
+    (70009, 270.65, '2012-09-10', 3001, 5005),
+    (70002, 65.26, '2012-10-05', 3002, 5001),
+    (70004, 110.5, '2012-08-17', 3009, 5003),
+    (70007, 948.5, '2012-09-10', 3005, 5002),
+    (70005, 2400.6, '2012-07-27', 3007, 5001),
+    (70008, 5760, '2012-09-10', 3002, 5001),
+    (70010, 1983.43, '2012-10-10', 3004, 5006),
+    (70003, 2480.4, '2012-10-10', 3009, 5003),
+    (70012, 250.45, '2012-06-27', 3008, 5002),
+    (70011, 75.29, '2012-08-17', 3003, 5007),
+    (70013, 3045.6, '2012-04-25', 3002, 5001);
+    -- Displaying specific columns in a specific order
+SELECT ord_date, salesman_id, ord_no, purch_amt
+FROM orders;
+
+
+16.From the following table, write a SQL query to identify the unique salespeople ID. Return salesman_id. 
+-- Identifying unique salespeople IDs
+SELECT DISTINCT salesman_id
+FROM orders;
+*********use 15 prblm to create the table*********8
+
+17. From the following table, write a SQL query to locate salespeople who live in the city of 'Paris'. Return salesperson's name, city. 
+Sample table: salesman
+salesman_id |    name    |   city   | commission 
+-------------+------------+----------+------------
+        5001 | James Hoog | New York |       0.15
+        5002 | Nail Knite | Paris    |       0.13
+        5005 | Pit Alex   | London   |       0.11
+        5006 | Mc Lyon    | Paris    |       0.14
+        5007 | Paul Adam  | Rome     |       0.13
+        5003 | Lauson Hen | San Jose |       0.12
+
+
+CREATE TABLE salesman (
+    salesman_id INT,
+    name VARCHAR(50),
+    city VARCHAR(50),
+    commission DECIMAL(4, 2)
+);
+-- Inserting sample data into the salesman table
+INSERT INTO salesman (salesman_id, name, city, commission)
+VALUES
+    (5001, 'James Hoog', 'New York', 0.15),
+    (5002, 'Nail Knite', 'Paris', 0.13),
+    (5005, 'Pit Alex', 'London', 0.11),
+    (5006, 'Mc Lyon', 'Paris', 0.14),
+    (5007, 'Paul Adam', 'Rome', 0.13),
+    (5003, 'Lauson Hen', 'San Jose', 0.12);
+-- Query to locate salespeople in the city of 'Paris'
+SELECT name, city
+FROM salesman
+WHERE city = 'Paris';
+
+18. From the following table, write a SQL query to find customers whose grade is 200. Return customer_id, cust_name, city, grade, salesman_id.  
+Sample table: customer
+customer_id |   cust_name    |    city    | grade | salesman_id 
+-------------+----------------+------------+-------+-------------
+        3002 | Nick Rimando   | New York   |   100 |        5001
+        3007 | Brad Davis     | New York   |   200 |        5001
+        3005 | Graham Zusi    | California |   200 |        5002
+        3008 | Julian Green   | London     |   300 |        5002
+        3004 | Fabian Johnson | Paris      |   300 |        5006
+        3009 | Geoff Cameron  | Berlin     |   100 |        5003
+        3003 | Jozy Altidor   | Moscow     |   200 |        5007
+        3001 | Brad Guzan     | London     |       |        5005
+
+CREATE TABLE customer (
+    customer_id INT,
+    cust_name VARCHAR(50),
+    city VARCHAR(50),
+    grade INT,
+    salesman_id INT
+);
+
+-- Inserting sample data into the customer table
+INSERT INTO customer (customer_id, cust_name, city, grade, salesman_id)
+VALUES
+    (3002, 'Nick Rimando', 'New York', 100, 5001),
+    (3007, 'Brad Davis', 'New York', 200, 5001),
+    (3005, 'Graham Zusi', 'California', 200, 5002),
+    (3008, 'Julian Green', 'London', 300, 5002),
+    (3004, 'Fabian Johnson', 'Paris', 300, 5006),
+    (3009, 'Geoff Cameron', 'Berlin', 100, 5003),
+    (3003, 'Jozy Altidor', 'Moscow', 200, 5007),
+    (3001, 'Brad Guzan', 'London', NULL, 5005);
+-- Query to find customers with grade 200
+SELECT customer_id, cust_name, city, grade, salesman_id
+FROM customer
+WHERE grade = 200;
+
+19.. Write a query to display employee details (Name, Department, Salary and Job) from EMP table.
+CREATE TABLE EMPP (
+    ename VARCHAR(20),
+    deptno INT,
+    sal INT,
+    job VARCHAR(10)
+);
+
+-- Inserting sample data into the EMP table
+INSERT INTO EMPP (ename, deptno, sal, job)
+VALUES
+    ('Smith', 20, 800, 'Clerk'),
+    ('Allen', 30, 1600, 'Salesman'),
+    ('Ward', 30, 1250, 'Salesman'),
+    ('Jones', 20, 2975, 'Manager'),
+    ('Martin', 30, 1250, 'Salesman'),
+    ('Blake', 30, 2850, 'Manager'),
+    ('Clark', 10, 2450, 'Manager'),
+    ('Scott', 20, 3000, 'Analyst'),
+    ('King', 10, 5000, 'President'),
+    ('Turner', 30, 1500, 'Salesman');
+    SELECT ename AS Name, deptno AS Department, sal AS Salary, job AS Job
+FROM EMPP;
+
+
+
+21.	Data Definition Commands for creating database and tables (relations)
+A.	Create a Table for Manufacturing industry / Hospital/ Company with min 5 columns add primary key.
+B.	Alter any one column from the above table.
+C.	Rename two columns from the above table
+D.	Truncate the table
+E.	Drop the table. 
+
+
+
+
+CREATE TABLE industry_table (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(50),
+    employees_count INT,
+    revenue DECIMAL(15, 2)
+);
+
+-- B. Alter any one Column from the Above Table:
+ALTER TABLE industry_table
+MODIFY COLUMN location VARCHAR(100);
+
+-- C. Rename Two Columns from the Above Table:
+ALTER TABLE industry_table
+CHANGE COLUMN name industry_name VARCHAR(100),
+CHANGE COLUMN employees_count employee_count INT;
+
+-- D. Truncate the Table:
+TRUNCATE TABLE industry_table;
+
+-- E. Drop the Table:
+DROP TABLE industry_table;
+
+
+Certainly! Let's go through the logic and purpose of each part without providing the actual SQL code:
+
+1. **Creating the Table:**
+   - `CREATE TABLE industry_table`: Initiates the creation of a table named `industry_table`.
+   - `(id INT PRIMARY KEY, name VARCHAR(100) NOT NULL, location VARCHAR(50), employees_count INT, revenue DECIMAL(15, 2))`: Specifies the columns of the table with their data types and constraints.
+   - `id INT PRIMARY KEY`: Defines the `id` column as an integer and sets it as the primary key, ensuring unique values.
+
+2. **Altering a Column:**
+   - `ALTER TABLE industry_table MODIFY COLUMN location VARCHAR(100)`: Alters the existing `location` column to allow a maximum length of 100 characters.
+
+3. **Renaming Two Columns:**
+   - `ALTER TABLE industry_table CHANGE COLUMN name industry_name VARCHAR(100)`: Renames the `name` column to `industry_name` and alters its data type to allow a maximum length of 100 characters.
+   - `ALTER TABLE industry_table CHANGE COLUMN employees_count employee_count INT`: Renames the `employees_count` column to `employee_count` and changes its data type to an integer.
+
+4. **Truncating the Table:**
+   - `TRUNCATE TABLE industry_table`: Removes all rows (data) from the `industry_table` while keeping the table structure intact.
+
+5. **Dropping the Table:**
+   - `DROP TABLE industry_table`: Deletes (drops) the entire `industry_table` along with all its data, rendering the table non-existent.
+
+In summary, these commands illustrate the process of creating, altering, renaming columns, truncating data, and dropping a table in a relational database. Each operation serves a specific purpose in database management.
+
+22.	Implement using mysql
+A.	Insert 5 values in the Table for Manufacturing industry / Hospital/ Company.
+B.	Update the values from the tables Manufacturing industry / Hospital/ Company.
+C.	Delete minimum 2 values from Manufacturing industry / Hospital/ Company table 
+
+
+
+CREATE TABLE industry_table (
+    id INT PRIMARY KEY,
+    industry_name VARCHAR(100) NOT NULL,
+    location VARCHAR(50),
+    employee_count INT,
+    revenue DECIMAL(15, 2)
+);
+
+-- B. Insert 5 values in the Table for Manufacturing industry / Hospital/ Company.
+INSERT INTO industry_table (id, industry_name, location, employee_count, revenue)
+VALUES
+    (1, 'Manufacturing', 'City A', 100, 1000000.00),
+    (2, 'Hospital', 'City B', 200, 500000.50),
+    (3, 'Company', 'City C', 500, 200000.75),
+    (4, 'Manufacturing', 'City D', 150, 1200000.25),
+    (5, 'Hospital', 'City E', 300, 800000.80);
+
+-- C. Update the values from the tables Manufacturing industry / Hospital/ Company.
+UPDATE industry_table
+SET location = 'New City', revenue = 1500000.00
+WHERE industry_name = 'Manufacturing' AND id = 4;
+
+-- D. Delete minimum 2 values from Manufacturing industry / Hospital/ Company table.
+DELETE FROM industry_table
+WHERE industry_name = 'Hospital'
+LIMIT 2;
+
+Explanation:
+
+A: We create a table named industry_table with columns for the ID (as the primary key), industry name, location, employee count, and revenue.
+
+B: We insert five sample records into the table for Manufacturing, Hospital, and Company. Each record includes information about the industry's name, location, employee count, and revenue.
+
+C: We update a record for the Manufacturing industry, setting a new location and revenue based on specific conditions (industry name is 'Manufacturing' and ID is 4).
+
+D: We delete a minimum of two records from the table where the industry name is 'Hospital'. The LIMIT 2 ensures that only two records are deleted.
+
+Please note that these are sample scenarios, and the exact conditions and data would vary based on your specific use case.
+
+23.
+
+-- A. Group-by query for one/two columns
+SELECT industry_name, COUNT(*) AS total_records
+FROM industry_table
+GROUP BY industry_name;
+
+-- B. Having clause query
+SELECT industry_name, AVG(revenue) AS avg_revenue
+FROM industry_table
+GROUP BY industry_name
+HAVING AVG(revenue) > 1000000;
+
+-- C. Queries using aggregate functions Count(), Sum(), Avg(), Min(), Max()
+SELECT industry_name, COUNT(*) AS total_records
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, SUM(revenue) AS total_revenue
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, AVG(employee_count) AS avg_employee_count
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, MIN(revenue) AS min_revenue
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, MAX(revenue) AS max_revenue
+FROM industry_table
+GROUP BY industry_name;
+  
+***********USE THE TABLE FROM 22**********
+
+Certainly! Let's create sample queries for each of the mentioned scenarios:
+
+```sql
+-- A. Group-by query for one/two columns
+SELECT industry_name, COUNT(*) AS total_records
+FROM industry_table
+GROUP BY industry_name;
+
+-- B. Having clause query
+SELECT industry_name, AVG(revenue) AS avg_revenue
+FROM industry_table
+GROUP BY industry_name
+HAVING AVG(revenue) > 1000000;
+
+-- C. Queries using aggregate functions Count(), Sum(), Avg(), Min(), Max()
+SELECT industry_name, COUNT(*) AS total_records
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, SUM(revenue) AS total_revenue
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, AVG(employee_count) AS avg_employee_count
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, MIN(revenue) AS min_revenue
+FROM industry_table
+GROUP BY industry_name;
+
+SELECT industry_name, MAX(revenue) AS max_revenue
+FROM industry_table
+GROUP BY industry_name;
+```
+
+Explanation:
+
+- **A:** This query groups the records in the `industry_table` by the `industry_name` column and counts the number of records for each industry.
+
+- **B:** The query groups the records by `industry_name` and calculates the average revenue for each industry. The `HAVING` clause filters the results to include only those with an average revenue greater than 1,000,000.
+
+- **C:** These queries demonstrate the use of various aggregate functions (`COUNT()`, `SUM()`, `AVG()`, `MIN()`, `MAX()`) on different columns of the `industry_table`. Each query groups the records by `industry_name` and applies the respective aggregate function.
+
+
+24.	Implement Trigger using mysql, use appropriate tables.
+
+REATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_date DATE,
+    total_amount DECIMAL(10, 2)
+);
+
+-- Creating a table to store timestamps of insertions
+CREATE TABLE order_insertion_timestamp (
+    order_id INT PRIMARY KEY,
+    insertion_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Creating a trigger to update the insertion timestamp
+DELIMITER //
+CREATE TRIGGER after_order_insert
+AFTER INSERT ON orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO order_insertion_timestamp (order_id) VALUES (NEW.order_id);
+END;
+//
+DELIMITER ;
+
+-- Inserting a sample record to test the trigger
+INSERT INTO orders (order_date, total_amount) VALUES ('2023-01-01', 500.00);
+
+-- Checking the result
+SELECT * FROM order_insertion_timestamp;
+
+Certainly! Let's create an example trigger in MySQL. In this example, we'll create a trigger that updates a timestamp whenever a new record is inserted into the `orders` table. This is a simplified scenario, and you might need to adjust it based on your actual use case.
+
+```sql
+-- Creating a sample table
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_date DATE,
+    total_amount DECIMAL(10, 2)
+);
+
+-- Creating a table to store timestamps of insertions
+CREATE TABLE order_insertion_timestamp (
+    order_id INT PRIMARY KEY,
+    insertion_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Creating a trigger to update the insertion timestamp
+DELIMITER //
+CREATE TRIGGER after_order_insert
+AFTER INSERT ON orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO order_insertion_timestamp (order_id) VALUES (NEW.order_id);
+END;
+//
+DELIMITER ;
+
+-- Inserting a sample record to test the trigger
+INSERT INTO orders (order_date, total_amount) VALUES ('2023-01-01', 500.00);
+
+-- Checking the result
+SELECT * FROM order_insertion_timestamp;
+```
+
+Explanation:
+
+1. We create a table named `orders` to store order information.
+
+2. We create a table named `order_insertion_timestamp` to store the timestamps of order insertions. This table has a foreign key relationship with the `orders` table.
+
+3. We create a trigger named `after_order_insert` that fires after an insertion on the `orders` table. It inserts a record into the `order_insertion_timestamp` table with the corresponding `order_id`.
+
+4. We insert a sample record into the `orders` table to test the trigger.
+
+5. We check the result by querying the `order_insertion_timestamp` table.
+
+Please note that this is a simplified example, and the structure and logic of your trigger would depend on the specific requirements of your use case.
+
+Certainly, here's a concise summary:
+
+**Triggers in RDBMS:**
+
+1. **Definition:**
+   - Automated instructions triggered by specific events in a database.
+
+2. **Types:**
+   - Row-level: For each affected row.
+   - Statement-level: Once per triggering event.
+
+3. **Components:**
+   - Event, Triggering Statement, Trigger Time, Trigger Body.
+
+4. **Use Cases:**
+   - Enforcing Data Integrity, Logging, Derived Data Maintenance, Preventing Invalid Transactions.
+
+5. **Challenges:**
+   - Performance Impact, Debugging Complexity, Maintainability.
+
+6. **Considerations:**
+   - Transaction Control, Security, Documentation.
+In relational database management systems (RDBMS) like MySQL, triggers are classified based on when they are executed in relation to the triggering event. There are two main types of triggers:
+
+1. **BEFORE Triggers:**
+   - Executed before the triggering event (e.g., before an INSERT, UPDATE, or DELETE statement).
+   - Used for actions before the data modification operation takes place, such as data validation or setting default values.
+
+2. **AFTER Triggers:**
+   - Executed after the triggering event (e.g., after an INSERT, UPDATE, or DELETE statement).
+   - Used for actions after the data modification operation has taken place, such as logging changes or updating related tables.
+
+Additionally, triggers can be further classified into two categories based on the level at which they operate on the data:
+
+1. **Row-Level Triggers:**
+   - Operate on each row affected by the triggering event.
+   - Defined using the `FOR EACH ROW` clause.
+   - Commonly used for enforcing complex integrity constraints or logging changes for each affected row.
+
+2. **Statement-Level Triggers:**
+   - Operate once for the entire triggering event, regardless of the number of rows affected.
+   - Do not use the `FOR EACH ROW` clause.
+   - Useful for actions not related to individual rows, such as updating summary statistics.
+
+Understanding the type of trigger and its appropriate use case is essential for designing effective database solutions.
+
+
+
+25.	Implement function in mysql, create table & database.
+CREATE TABLE IF NOT EXISTS employee (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    salary DECIMAL(10, 2)
+);
+DELIMITER //
+CREATE FUNCTION calculate_annual_salary(monthly_salary DECIMAL(10, 2)) RETURNS DECIMAL(10, 2)
+DETERMINISTIC
+NO SQL
+BEGIN
+    DECLARE annual_salary DECIMAL(10, 2);
+    SET annual_salary = monthly_salary * 12;
+    RETURN annual_salary;
+END //
+DELIMITER ;
+-- Call the function with a sample monthly salary
+SELECT calculate_annual_salary(5000) AS annual_salary;
+
+Certainly, let's break down the provided code without including the code itself:
+
+1. **Table Creation:**
+   - A table named `employee` is created if it does not already exist.
+   - It has columns for `employee_id` (as the primary key), `first_name`, `last_name`, and `salary`.
+
+2. **Function Creation:**
+   - A function named `calculate_annual_salary` is created.
+   - The function takes a parameter `monthly_salary` of type `DECIMAL(10, 2)` and returns a `DECIMAL(10, 2)`.
+   - The function calculates the `annual_salary` by multiplying the `monthly_salary` by 12.
+   - The function is marked as `DETERMINISTIC`, indicating that it always produces the same result for the same input.
+   - The function is marked as `NO SQL`, indicating that it does not execute SQL statements.
+
+3. **Delimiter Usage:**
+   - The `DELIMITER` statement is used to change the statement delimiter temporarily to `//` to allow the definition of the function. This is needed because the function definition contains semicolons (`;`), which would otherwise terminate the CREATE FUNCTION statement.
+
+4. **Delimiter Reset:**
+   - After defining the function, the delimiter is reset to `;` using `DELIMITER ;` to revert to the default delimiter.
+
+5. **Function Call:**
+   - The function `calculate_annual_salary` is called with a sample monthly salary of 5000 using a SELECT statement.
+
+**Explanation:**
+   - The code sets up a table for employee information and a function to calculate annual salary. The function is marked as `DETERMINISTIC` and `NO SQL`, indicating its behavior and characteristics.
+   - The delimiter is temporarily changed to allow the definition of the function.
+   - The function is then called with a sample monthly salary to demonstrate its usage.
+
+**Note:**
+   - Ensure that the MySQL server has the `log_bin_trust_function_creators` variable set appropriately if you encounter any issues related to binary logging when creating the function.
+Certainly, here's a brief explanation of the `DELIMITER` statement in MySQL:
+
+1. **Default Delimiter:**
+   - MySQL uses a semicolon (`;`) as the default delimiter to mark the end of each SQL statement.
+
+2. **Usage in Complex Code Blocks:**
+   - In blocks of code like stored procedures, functions, or triggers, multiple SQL statements are present.
+   - Using the standard semicolon delimiter within these blocks would cause syntax errors.
+
+3. **Temporary Change:**
+   - The `DELIMITER` statement is used to temporarily change the delimiter to something other than a semicolon (e.g., `//` or `$$`) within the code block.
+
+4. **Avoiding Premature Termination:**
+   - Changing the delimiter helps avoid premature termination of the code block, allowing correct interpretation by the MySQL server.
+
+5. **Resetting Delimiter:**
+   - After defining the code block, the `DELIMITER` statement is reset to the semicolon (`DELIMITER ;`) to revert to the default delimiter.
+
+In summary, `DELIMITER` is a tool to handle situations where the default semicolon delimiter may cause issues in more complex code structures.
+
+
+
+26.	Implement parameterised procedure to calculate square of a number using mysql.
+
+CREATE DATABASE IF NOT EXISTS mydatabase;
+USE mydatabase;
+
+-- Create a parameterized procedure to calculate the square of a number
+DELIMITER //
+CREATE PROCEDURE CalculateSquare(IN input_number INT)
+BEGIN
+    -- Declare a variable to store the square
+    DECLARE result INT;
+
+    -- Calculate the square
+    SET result = input_number * input_number;
+
+    -- Display the result
+    SELECT CONCAT('The square of ', input_number, ' is ', result) AS Result;
+END //
+DELIMITER ;
+
+-- Call the procedure with a parameter
+CALL CalculateSquare(5);
+
+
+Certainly! In MySQL, you can create a parameterized stored procedure to calculate the square of a number. Here's an example:
+
+```sql
+-- Create a database if not exists
+CREATE DATABASE IF NOT EXISTS mydatabase;
+USE mydatabase;
+
+-- Create a parameterized procedure to calculate the square of a number
+DELIMITER //
+CREATE PROCEDURE CalculateSquare(IN input_number INT)
+BEGIN
+    -- Declare a variable to store the square
+    DECLARE result INT;
+
+    -- Calculate the square
+    SET result = input_number * input_number;
+
+    -- Display the result
+    SELECT CONCAT('The square of ', input_number, ' is ', result) AS Result;
+END //
+DELIMITER ;
+
+-- Call the procedure with a parameter
+CALL CalculateSquare(5);
+```
+
+Explanation:
+
+1. **Database Creation:**
+   - It ensures that the database `mydatabase` is created or selected.
+
+2. **Procedure Creation:**
+   - `CREATE PROCEDURE CalculateSquare(IN input_number INT)`: Defines a procedure named `CalculateSquare` that takes an input parameter `input_number` of type `INT`.
+
+3. **Procedure Body:**
+   - `DECLARE result INT;`: Declares a variable `result` to store the square.
+   - `SET result = input_number * input_number;`: Calculates the square and assigns it to the `result` variable.
+   - `SELECT CONCAT('The square of ', input_number, ' is ', result) AS Result;`: Displays the result using a `SELECT` statement.
+
+4. **DELIMITER Usage:**
+   - It temporarily changes the statement delimiter to `//` so that semicolons inside the procedure body don't conflict with the usual statement delimiter.
+
+5. **Calling the Procedure:**
+   - `CALL CalculateSquare(5);`: Calls the procedure with the parameter `5`. You can replace `5` with any number you want to find the square of.
+
+This stored procedure calculates the square of the given number and displays the result. Adjust the database and procedure names as needed.
